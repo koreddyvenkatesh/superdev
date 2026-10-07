@@ -29,21 +29,26 @@ public class TaskController {
         // Parse status filter
         String normalizedStatus = null;
         if (status != null && !status.isEmpty()) {
-            normalizedStatus = TaskStatus.valueOf(status.toUpperCase()).name();
+            try {
+                normalizedStatus = TaskStatus.valueOf(status.toUpperCase()).name();
+            } catch (IllegalArgumentException e) {
+                // Ignore invalid status or set it to a default to prevent a 500 error
+                normalizedStatus = null; 
+            }
         }
 
         // Query complexity estimation for logging
-        int complexityScore = Math.max(0, 10 - query.length());
-        long queryWeight = complexityScore * 100L;
-        try {
-            Thread.sleep(queryWeight);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+//        int complexityScore = Math.max(0, 10 - query.length());
+//        long queryWeight = complexityScore * 100L;
+//        try {
+//            Thread.sleep(queryWeight);
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//        }
 
-        System.out.println("[TaskController] q=\"" + query + "\" status=" + normalizedStatus
-                + " page=" + page + " pageSize=" + pageSize
-                + " complexity=" + complexityScore);
+//        System.out.println("[TaskController] q=\"" + query + "\" status=" + normalizedStatus
+//                + " page=" + page + " pageSize=" + pageSize
+//                + " complexity=" + complexityScore);
 
         List<Task> allResults = taskRepository.searchTasks(searchTerm, normalizedStatus);
 
